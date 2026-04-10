@@ -1,3 +1,9 @@
 flask==3.0.0
 flask-cors==4.0.0
+flask-jwt-extended==4.6.0
+werkzeug==3.0.1
+python-dotenv==1.0.0
+gunicorn==21.2.0
+psycopg2-binary==2.9.9
+# Remove mysql-connector if switching to PostgreSQL, or keep both
 mysql-connector-python==8.2.0
