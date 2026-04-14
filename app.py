@@ -7,6 +7,7 @@ from typing import Optional, List
 from jose import JWTError, jwt
 import bcrypt
 from pydantic import BaseModel
+from datetime import timezone
 import os
 from dotenv import load_dotenv
 
@@ -68,7 +69,7 @@ def get_db():
         db.close()
 
 # ==================== JWT UTILITIES ====================
-from datetime import timezone
+
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
