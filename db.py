@@ -1,44 +1,41 @@
 import os
-import psycopg2
-from psycopg2.extras import RealDictCursor
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 
 load_dotenv()
 
-class PostgresConnectionWrapper:
-    """Wrapper to make PostgreSQL connection compatible with MySQL cursor(dictionary=True)"""
-    def __init__(self, conn):
-        self._conn = conn
-    
-    def cursor(self, *args, **kwargs):
-        # Ignore dictionary=True for PostgreSQL (RealDictCursor already returns dicts)
-        kwargs.pop('dictionary', None)
-        return self._conn.cursor(*args, **kwargs)
-    
-    def commit(self):
-        return self._conn.commit()
-    
-    def rollback(self):
-        return self._conn.rollback()
-    
-    def close(self):
-        return self._conn.close()
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
+DB_NAME = os.getenv("DB_NAME")
 
-def get_db_connection():
-    database_url = os.getenv('DATABASE_URL')
-    
-    if database_url:
-        # Production: PostgreSQL (RealDictCursor already returns dicts)
-        conn = psycopg2.connect(database_url, cursor_factory=RealDictCursor)
-        return PostgresConnectionWrapper(conn)
-    else:
-        # Local: MySQL (needs dictionary=True)
-        import mysql.connector
-        conn = mysql.connector.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            user=os.getenv('DB_USER', 'root'),
-            password=os.getenv('DB_PASSWORD', ''),
-            database=os.getenv('DB_NAME', 'leave_system'),
-            port=int(os.getenv('DB_PORT', 3307))
-        )
-        return conn
+DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True
+)
+
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+try:
+    connection = engine.connect()
+    print("✅ Database connected successfully")
+    connection.close()
+except Exception as e:
+    print("❌ Database error:", e)

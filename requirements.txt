@@ -1,9 +1,26 @@
-flask==3.0.0
-flask-cors==4.0.0
-flask-jwt-extended==4.6.0
-werkzeug==3.0.1
+# Web Framework - FastAPI
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# CORS Middleware (built into FastAPI but kept for clarity)
+# No need for flask-cors anymore
+
+# Database - SQLAlchemy ORM
+sqlalchemy==2.0.25
+
+# MySQL Driver
+pymysql==1.1.0
+cryptography==42.0.0  # Required by PyMySQL for authentication
+
+# JWT Authentication
+python-jose[cryptography]==3.3.0
+
+# Password Hashing - Using bcrypt (not werkzeug)
+bcrypt==4.1.2
+
+# Environment Variables
 python-dotenv==1.0.0
-gunicorn==21.2.0
-psycopg2-binary==2.9.9
-# Remove mysql-connector if switching to PostgreSQL, or keep both
-mysql-connector-python==8.2.0
+
+# Pydantic (usually comes with FastAPI but explicit is good)
+pydantic==2.5.3
