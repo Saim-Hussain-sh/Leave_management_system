@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Date, Text, TIMESTAMP, ForeignKey, text
 from sqlalchemy.orm import relationship
-from db import Base
+from backend.db import Base
 import bcrypt   
 
 class Role(Base):
